@@ -2,6 +2,7 @@ package cpsc470.pursuit.agent;
 
 import java.util.Map;
 
+import cpsc470.pursuit.environment.Maze;
 import cpsc470.pursuit.environment.PursuitWorldPercept;
 
 import aima.core.util.datastructure.XYLocation;
@@ -19,10 +20,12 @@ public class OnlineGreedyPursuerAgentProgram extends AbstractOnlineGreedyPursuit
 		XYLocation location = null;
 		
 		// TODO PROBLEM 1: FILL THIS IN
+		@SuppressWarnings("unchecked")
 		Map<Integer, XYLocation> agentLocations =
 				(Map<Integer, XYLocation>) percept.getAttribute(PursuitWorldPercept.AttributeKey.AgentsLocations);
-		Object pursuedAgentIdValue = (Integer) percept.getAttribute(PursuitWorldPercept.AttributeKey.PursuedAgentId);
-		return agentLocations.get(pursuedAgentIdValue);
+		int agentId = (Integer) percept.getAttribute(PursuitWorldPercept.AttributeKey.PursuedAgentId);
+		return agentLocations.get(agentId);
+		
 	}
 
 }

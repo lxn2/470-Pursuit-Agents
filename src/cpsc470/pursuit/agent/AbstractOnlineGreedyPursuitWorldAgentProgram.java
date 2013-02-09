@@ -77,7 +77,7 @@ public abstract class AbstractOnlineGreedyPursuitWorldAgentProgram implements Ag
 		int min2pos = 0;
 		int min2 = 0;
 		int min1 = routeHueristics.get(0);
-		int result = 0;
+
 		for (int i=0; i<routeHueristics.size(); i++){
 			if(routeHueristics.get(i) < min1){
 				min1 = routeHueristics.get(i);
