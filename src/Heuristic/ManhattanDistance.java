@@ -88,9 +88,9 @@ public class ManhattanDistance {
 			//if going in a horizontal direction
 			int dirX = secondX - firstX;
 			if (dirX < 0)
-				direction = PursuitWorldAction.Right;
-			else
 				direction = PursuitWorldAction.Left;
+			else
+				direction = PursuitWorldAction.Right;
 			
 		}
 		else if(finalX < finalY) {
