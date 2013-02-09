@@ -7,6 +7,7 @@ import cpsc470.pursuit.environment.PursuitWorldAction;
 
 import java.lang.Math;
 
+
 public class ManhattanDistance {
 	
 	private XYLocation first;
@@ -36,7 +37,6 @@ public class ManhattanDistance {
 		
 		return distance;
 	}
-	
 	public int getDistance(XYLocation iFirst, XYLocation iSecond){
 		int firstX = iFirst.getXCoOrdinate();
 		int firstY = iFirst.getYCoOrdinate();
@@ -85,18 +85,18 @@ public class ManhattanDistance {
 		int finalY = Math.abs(firstY - secondY);
 		
 		if (finalX > finalY){
-			//if going in a vertical direction
-			int dirX = firstX - secondX;
-			if (dirX > 0)
+			//if going in a horizontal direction
+			int dirX = secondX - firstX;
+			if (dirX < 0)
 				direction = PursuitWorldAction.Right;
 			else
 				direction = PursuitWorldAction.Left;
 			
 		}
 		else if(finalX < finalY) {
-			//if going in a horizontal direction
-			int dirY = firstY - secondY;
-			if (dirY > 0)
+			//if going in a vertical direction
+			int dirY =  secondY - firstY;
+			if (dirY < 0)
 				direction = PursuitWorldAction.Up;
 			else
 				direction = PursuitWorldAction.Down;
@@ -104,15 +104,28 @@ public class ManhattanDistance {
 		}
 		else{
 		//if either direction is equal, go vertically	
-			int dirX = firstX - secondX;
-			if (dirX > 0)
+			int dirY = firstY - secondY;
+			if (dirY > 0)
 				direction = PursuitWorldAction.Up;
 			else
 				direction = PursuitWorldAction.Down;
 
 		}
-		
-		
+	
+		if (finalX == 0){
+			int dirY =  secondY - firstY;
+			if (dirY > 0)
+				direction = PursuitWorldAction.Up;
+			else
+				direction = PursuitWorldAction.Down;
+		}
+		if (finalY == 0){
+			int dirX = secondX - firstX;
+			if (dirX > 0)
+				direction = PursuitWorldAction.Right;
+			else
+				direction = PursuitWorldAction.Left;
+		}
 		return direction;
 	}
 	
