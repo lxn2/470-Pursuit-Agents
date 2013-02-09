@@ -1,0 +1,28 @@
+// maze
+// - 2x2 array of 1s (walls) and 0s (spaces)
+// - space-delimited rows
+0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 1 1 1 1 1 1 1 1 0 1 0
+1 0 1 1 1 1 1 1 1 1 0 0 1 0
+0 0 0 0 0 1 0 0 0 0 0 1 1 0
+0 0 0 0 0 1 0 1 0 1 0 1 1 0
+0 0 0 0 0 1 0 1 0 1 0 1 1 0
+0 1 1 1 1 1 0 1 0 1 0 1 1 0
+0 0 0 0 0 1 0 1 1 1 0 1 1 0
+0 0 0 0 0 1 0 0 0 0 0 0 1 0
+0 0 0 0 0 1 0 0 0 0 0 0 1 0
+1 1 0 1 1 1 1 1 1 1 1 1 1 0
+0 0 0 0 0 0 0 0 1 1 1 1 1 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0
+
+// locations of goal and agents
+// - top left corner of maze is (1, 1)
+goal: (9, 7)
+
+pursued: (14, 13)
+
+pursuer: (1, 13)
+pursuer: (1, 8)
+pursuer: (1, 4)
+pursuer: (1, 1)
+pursuer: (8, 4)

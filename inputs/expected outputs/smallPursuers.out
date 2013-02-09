@@ -1,0 +1,12 @@
+Pursued agent type: NoOp
+Pursuer agent type: Greedy
+Transcript:
+Pursued	Pursuer0	Pursuer1
+(1, 1)	(7, 1)	(7, 2)
+(1, 1)	(6, 1)	(6, 2)
+(1, 1)	(5, 1)	(5, 2)
+(1, 1)	(5, 1)	(4, 2)
+(1, 1)	(5, 1)	(3, 2)
+(1, 1)	(5, 1)	(2, 2)
+(1, 1)	(5, 1)	(2, 1)
+(1, 1)	(5, 1)	(1, 1)
