@@ -84,15 +84,23 @@ public class SmartAStarPursuedAgent extends AStarPursuedAgent {
 			
 			// TODO PROBLEM 4: FILL THIS IN
 			SmartAStarPursuedAgentState state = (SmartAStarPursuedAgentState) obj;
+			
+			// compare pursuer locations
 			for(Integer agentId : this.getPursuerAgentsIds()) {
 				XYLocation thisAgentLocation = this.getAgentLocation(agentId);
 				XYLocation stateAgentLocation = state.getAgentLocation(agentId);
-				if(thisAgentLocation.equals(stateAgentLocation)) 
+				if(!thisAgentLocation.equals(stateAgentLocation)) 
 				{
 					isEqual = false;
 					break;
 				}
 			}
+			
+			// compare pursued locations
+			XYLocation thisPursuedAgentLocation = this.getPursuedAgentLocation();
+			XYLocation statePursuedAgentLocation = state.getPursuedAgentLocation();
+			if(!thisPursuedAgentLocation.equals(statePursuedAgentLocation))
+				isEqual = false;
 			
 			return isEqual;
 		}
@@ -147,11 +155,11 @@ public class SmartAStarPursuedAgent extends AStarPursuedAgent {
 			XYLocation pursuedAgentNewLocation = newState.getPursuedAgentLocation();
 			for(Integer agentId : newState.getPursuerAgentsIds()) {
 				XYLocation agentLocation = newState.getAgentLocation(agentId);
-				AbstractOnlineGreedyPursuitWorldAgentProgram greedyProgram = new OnlineGreedyPursuerAgentProgram();
+				OnlineGreedyPursuerAgentProgram greedyProgram = new OnlineGreedyPursuerAgentProgram();
 				PursuitWorldAction pursuerNextAction = (PursuitWorldAction) greedyProgram.getGreedyMove(agentLocation, pursuedAgentNewLocation, newState.getMaze());
 				newState.move(agentId, pursuerNextAction);
 			}
-			
+			/*
 			for(Integer agentId : newState.getPursuerAgentsIds()) {
 				XYLocation pursuerLocation = newState.getAgentLocation(agentId);
 				if (pursuerLocation == pursuedAgentNewLocation) 
@@ -159,7 +167,7 @@ public class SmartAStarPursuedAgent extends AStarPursuedAgent {
 					newState.invalidate(); //Double.POSITIVE_INFINITY;
 					break;
 				}
-			}
+			} */
 			
 			return newState;
 		}
@@ -246,9 +254,9 @@ public class SmartAStarPursuedAgent extends AStarPursuedAgent {
 			List<Integer> pursuerIds = state.getPursuerAgentsIds();
 			for(Integer pursuerId : pursuerIds) {
 				XYLocation pursuerLocation = state.getAgentLocation(pursuerId);
-				if (pursuerLocation == state.getPursuedAgentLocation()) 
+				if (pursuerLocation.equals(state.getPursuedAgentLocation())) 
 				{
-					cost = 100000.00; //Double.POSITIVE_INFINITY;
+					cost = Double.POSITIVE_INFINITY;
 					break;
 				}
 			}
