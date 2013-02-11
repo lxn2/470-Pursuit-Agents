@@ -56,7 +56,7 @@ public abstract class AbstractOnlineGreedyPursuitWorldAgentProgram implements Ag
 	 */
 	protected Action getGreedyMove(XYLocation initialLocation, XYLocation goalLocation, Maze maze) {
 
-		PursuitWorldAction action;
+		PursuitWorldAction action = PursuitWorldAction.Stay;
 		// TODO PROBLEM 1: FILL THIS IN
 		//int resultX = goalLocation.getXCoOrdinate() - initialLocation.getXCoOrdinate();
 		//int resultY = goalLocation.getYCoOrdinate() - initialLocation.getYCoOrdinate();
@@ -96,13 +96,98 @@ public abstract class AbstractOnlineGreedyPursuitWorldAgentProgram implements Ag
 		if(tied){
 			PursuitWorldAction action1 = PursuitWorldAction.getAction(initialLocation, availableMoves.get(min1pos));
 			PursuitWorldAction action2 = PursuitWorldAction.getAction(initialLocation, availableMoves.get(min2pos));
-			PursuitWorldAction checkDirection = man.getDirection(initialLocation, goalLocation);
+			
+			boolean sameAxis = checkAxis(action1, action2);
+			
+			
+			int firstX = initialLocation.getXCoOrdinate();
+			int firstY = initialLocation.getYCoOrdinate();
+			int secondX = goalLocation.getXCoOrdinate();
+			int secondY = goalLocation.getYCoOrdinate();
+			int finalX = Math.abs(firstX - secondX);
+			int finalY = Math.abs(firstY - secondY);
+			
+			if (finalX > finalY){
+				if(sameAxis){
+					if(action1.equals(PursuitWorldAction.Left))
+						action = action1;
+					else 
+						action = action2;
+				}
+				else{
+					if(action1.equals(PursuitWorldAction.Left) || action1.equals(PursuitWorldAction.Right) )
+						action = action1;
+					else 
+						action = action2;			
+				}
+				
+			}
+			else if(finalX < finalY) {
+				if(sameAxis){
+					if(action1.equals(PursuitWorldAction.Down))
+						action = action1;
+					else 
+						action = action2;
+				}
+				else{
+					if(action1.equals(PursuitWorldAction.Down) || action1.equals(PursuitWorldAction.Up) )
+						action = action1;
+					else 
+						action = action2;			
+				}
+			}
+			else{
+				if(sameAxis){
+					if(action1.equals(PursuitWorldAction.Down))
+						action = action1;
+					else 
+						action = action2;
+				}
+				else{
+					if(action1.equals(PursuitWorldAction.Down) || action1.equals(PursuitWorldAction.Up) )
+						action = action1;
+					else 
+						action = action2;			
+				}
+
+			}
 		
-			if (checkDirection.equals(action1) )
-			action = action1;
-			else
-			action = action2;
-		
+			if (finalX == 0){
+				if(sameAxis){
+					if(action1.equals(PursuitWorldAction.Left))
+						action = action1;
+					else 
+						action = action2;
+				}
+				else{
+					if(action1.equals(PursuitWorldAction.Left) || action1.equals(PursuitWorldAction.Right) )
+						action = action1;
+					else 
+						action = action2;			
+				}
+				
+				
+				
+
+
+			}
+			if (finalY == 0){
+
+				if(sameAxis){
+					if(action1.equals(PursuitWorldAction.Down))
+						action = action1;
+					else 
+						action = action2;
+				}
+				else{
+					if(action1.equals(PursuitWorldAction.Down) || action1.equals(PursuitWorldAction.Up) )
+						action = action1;
+					else 
+						action = action2;			
+				}
+			}
+					
+			
 		}
 		else {		
 		XYLocation path = availableMoves.get(min1pos);
@@ -129,4 +214,33 @@ public abstract class AbstractOnlineGreedyPursuitWorldAgentProgram implements Ag
 		}
 		return accessibleLocations;
 	}
+	
+	
+	protected boolean checkAxis(PursuitWorldAction action1, PursuitWorldAction action2){
+		boolean direction = false;
+		boolean action1axis = false; // false = horizontal
+		boolean action2axis = false; // true = vertical
+		if(	action1.equals(PursuitWorldAction.Left ) || action1.equals(PursuitWorldAction.Right)  ) 
+			action1axis = false;
+		else
+			action1axis = true;
+		if(	action2.equals(PursuitWorldAction.Left ) || action2.equals(PursuitWorldAction.Right)  ) 	
+			action2axis = false;
+		else
+			action2axis = true;
+		
+		if(action2axis == action1axis)
+			direction = true;
+		else
+			direction = false;
+				
+		return direction;
+		
+		
+	}
+	
+	
+	
+
+	
 }

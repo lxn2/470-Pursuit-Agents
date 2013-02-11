@@ -11,7 +11,7 @@ import cpsc470.pursuit.environment.Maze;
 import cpsc470.pursuit.environment.PursuitWorldAction;
 
 public class OnlineGreedyTabuPursuedAgentProgram extends OnlineGreedyPursuedAgentProgram {
-	private static final int TABU_LIST_SIZE = 25; // TODO (p2) make this an argument for at least one constructor
+	private static final int TABU_LIST_SIZE = 130; // TODO (p2) make this an argument for at least one constructor
 	private ArrayList<XYLocation>  tabuList;
 	private ManhattanDistance man;
 	
@@ -34,7 +34,7 @@ public class OnlineGreedyTabuPursuedAgentProgram extends OnlineGreedyPursuedAgen
 		
 		
 		PursuitWorldAction action = PursuitWorldAction.Stay;
-		XYLocation path;
+		XYLocation path = currentLocation;
 		List<XYLocation> availableMoves = new LinkedList<XYLocation>();
 		List<XYLocation> initialMoves = new LinkedList<XYLocation>();
 		List<Integer> initialHueristics = new LinkedList<Integer>();
@@ -117,28 +117,137 @@ public class OnlineGreedyTabuPursuedAgentProgram extends OnlineGreedyPursuedAgen
 			tied = true;
 		}
 		
-		if(tied){
+ 		if(tied){
+	
 			PursuitWorldAction action1 = PursuitWorldAction.getAction(currentLocation, availableMoves.get(min1pos));
 			PursuitWorldAction action2 = PursuitWorldAction.getAction(currentLocation, availableMoves.get(min2pos));
-			PursuitWorldAction checkDirection = man.getDirection(currentLocation, goalLocation);
-		
-			if (checkDirection.equals(action1) ){
-				action = action1;
-				path = availableMoves.get(min1pos);
-			}else{
-				action = action2;
-				path = availableMoves.get(min2pos);
+			
+			boolean sameAxis = checkAxis(action1, action2);
+			
+			
+			int firstX = currentLocation.getXCoOrdinate();
+			int firstY = currentLocation.getYCoOrdinate();
+			int secondX = goalLocation.getXCoOrdinate();
+			int secondY = goalLocation.getYCoOrdinate();
+			int finalX = Math.abs(firstX - secondX);
+			int finalY = Math.abs(firstY - secondY);
+			int dirX = firstX - secondX;
+			int dirY = firstY - secondY;
+			
+			if (finalX > finalY){
+				if(sameAxis){
+					//if the only available moves are left or right
+					if(action1.equals(PursuitWorldAction.Left))
+						//prioritize left over right
+						action = action1;
+					else 
+						action = action2;
+				}
+				else{
+					//if the available moves are on different axes
+					if(dirX < 0){
+						if (action1.equals(PursuitWorldAction.Right) )
+							action = action1;
+						else 
+							action = action2;
+					}
+					else{
+						if(action1.equals(PursuitWorldAction.Left)  )
+							action = action1;
+						else 
+							action = action2;		
+						}
+				}
+				
+			}
+			else if(finalX < finalY) {
+				if(sameAxis){
+					//if the only available moves are up or down
+					if(action1.equals(PursuitWorldAction.Down))
+						//prioritize down over up
+						action = action1;
+					else 
+						action = action2;
+				}
+				else{
+					//if the available moves are on different axes
+					if(dirY < 0){
+						//if 
+						if (action1.equals(PursuitWorldAction.Down) )
+							action = action1;
+						else 
+							action = action2;
+					}
+					else{
+						if(action1.equals(PursuitWorldAction.Up)  )
+							action = action1;
+						else 
+							action = action2;	
+						}
+					}
+				}
+			else{
+				if(sameAxis){
+					if(action1.equals(PursuitWorldAction.Down))
+						action = action1;
+					else 
+						action = action2;
+				}
+				else{
+					if(action1.equals(PursuitWorldAction.Down) || action1.equals(PursuitWorldAction.Up) )
+						action = action1;
+					else 
+						action = action2;			
+				}
+
 			}
 		
+			if (finalX == 0){
+				if(sameAxis){
+					if(action1.equals(PursuitWorldAction.Left))
+						action = action1;
+					else 
+						action = action2;
+				}
+				else{
+					if(action1.equals(PursuitWorldAction.Left) || action1.equals(PursuitWorldAction.Right) )
+						action = action1;
+					else 
+						action = action2;			
+				}
+				
+				
+				
+
+
+			}
+			if (finalY == 0){
+
+				if(sameAxis){
+					if(action1.equals(PursuitWorldAction.Down))
+						action = action1;
+					else 
+						action = action2;
+				}
+				else{
+					if(action1.equals(PursuitWorldAction.Down) || action1.equals(PursuitWorldAction.Up) )
+						action = action1;
+					else 
+						action = action2;			
+				}
+			}
+			
+			
+			path = PursuitWorldAction.getDestinationLocation(currentLocation, action);
+			
 		}
 		else {		
 		path = availableMoves.get(min1pos);
 		action = PursuitWorldAction.getAction(currentLocation, path);
 		}
 		
-		
+	
 		int addNode = 0;
-		
 		if(!tabuList.contains(currentLocation))
 			addNode++;
 		if(!tabuList.contains(path))
@@ -160,5 +269,28 @@ public class OnlineGreedyTabuPursuedAgentProgram extends OnlineGreedyPursuedAgen
 			
 		
 		return action;
+	}
+	
+	protected boolean checkAxis(PursuitWorldAction action1, PursuitWorldAction action2){
+		boolean direction = false;
+		boolean action1axis = false; // false = horizontal
+		boolean action2axis = false; // true = vertical
+		if(	action1.equals(PursuitWorldAction.Left ) || action1.equals(PursuitWorldAction.Right)  ) 
+			action1axis = false;
+		else
+			action1axis = true;
+		if(	action2.equals(PursuitWorldAction.Left ) || action2.equals(PursuitWorldAction.Right)  ) 	
+			action2axis = false;
+		else
+			action2axis = true;
+		
+		if(action2axis == action1axis)
+			direction = true;
+		else
+			direction = false;
+				
+		return direction;
+		
+		
 	}
 }
