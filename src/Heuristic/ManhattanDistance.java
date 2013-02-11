@@ -37,6 +37,7 @@ public class ManhattanDistance {
 		
 		return distance;
 	}
+	
 	public int getDistance(XYLocation iFirst, XYLocation iSecond){
 		int firstX = iFirst.getXCoOrdinate();
 		int firstY = iFirst.getYCoOrdinate();

@@ -45,7 +45,7 @@ public abstract class AbstractAStarPursuitWorldAgent extends AbstractPursuitWorl
 
 	protected static class AStarPursuitWorldState implements State {
 		
-		private Maze maze;
+		protected Maze maze;
 		
 		private Integer pursuedAgentId;
 		private List<Integer> pursuerAgentsIds;
@@ -62,7 +62,7 @@ public abstract class AbstractAStarPursuitWorldAgent extends AbstractPursuitWorl
 			this(state.maze, state.pursuedAgentId, state.pursuerAgentsIds, state.agentsLocations);
 		}
 		
-		public Maze getMaze() {
+		Maze getMaze() {
 			return maze;
 		}
 
@@ -328,8 +328,8 @@ public abstract class AbstractAStarPursuitWorldAgent extends AbstractPursuitWorl
 	 */
 	protected static class PursuitResultFunction implements ResultFunction {
 		
-		private AbstractPursuitWorldAgent agent;
-		private PursuitWorldAction action;
+		protected AbstractPursuitWorldAgent agent;
+		protected PursuitWorldAction action;
 		
 		public PursuitResultFunction(AbstractPursuitWorldAgent agent) {
 			this.agent = agent;

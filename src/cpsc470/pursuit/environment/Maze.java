@@ -14,22 +14,21 @@ public class Maze {
 	public Maze(boolean[][] isWall, XYLocation safetyLocation) {
 		int height = isWall.length + 2;
 		int width = isWall.length > 0 ? isWall[0].length + 2 : 2;
-		this.isWall = new boolean[height][width];
+		this.setIsWall(new boolean[height][width]);
 		for (int y = 0; y < height; ++y) {
 			for (int x = 0; x < width; ++x) {
-				this.isWall[y][x] = (x == 0) || (x == width - 1) || (y == 0) || (y == height - 1) || isWall[y - 1][x - 1];
+				this.getIsWall()[y][x] = (x == 0) || (x == width - 1) || (y == 0) || (y == height - 1) || isWall[y - 1][x - 1];
 			}
 		}
-		
 		this.safetyLocation = safetyLocation;
 	}
 	
 	public int getHeight() {
-		return isWall.length;
+		return getIsWall().length;
 	}
 	
 	public int getWidth() {
-		return isWall[0].length;
+		return getIsWall()[0].length;
 	}
 	
 	public boolean isWall(XYLocation location) {
@@ -37,10 +36,18 @@ public class Maze {
 	}
 	
 	public boolean isWall(int x, int y) {
-		return isWall[y][x];
+		return getIsWall()[y][x];
 	}
 	
 	public XYLocation getSafetyLocation() {
 		return safetyLocation;
+	}
+
+	public boolean[][] getIsWall() {
+		return isWall.clone();
+	}
+
+	public void setIsWall(boolean[][] isWall) {
+		this.isWall = isWall;
 	}
 }
