@@ -11,7 +11,7 @@ import cpsc470.pursuit.environment.Maze;
 import cpsc470.pursuit.environment.PursuitWorldAction;
 
 public class OnlineGreedyTabuPursuedAgentProgram extends OnlineGreedyPursuedAgentProgram {
-	private static final int TABU_LIST_SIZE = 130; // TODO (p2) make this an argument for at least one constructor
+	private static final int TABU_LIST_SIZE = 14; // TODO (p2) make this an argument for at least one constructor
 	private ArrayList<XYLocation>  tabuList;
 	private ManhattanDistance man;
 	
@@ -97,7 +97,7 @@ public class OnlineGreedyTabuPursuedAgentProgram extends OnlineGreedyPursuedAgen
 		boolean tied = false;
 		int min1pos = 0;
 		int min2pos = 0;
-		int min2 = 0;
+		int min2 = -10;
 		int min1 = routeHueristics.get(0);
 
 		for (int i=1; i<availableSize; i++){
@@ -121,7 +121,7 @@ public class OnlineGreedyTabuPursuedAgentProgram extends OnlineGreedyPursuedAgen
 	
 			PursuitWorldAction action1 = PursuitWorldAction.getAction(currentLocation, availableMoves.get(min1pos));
 			PursuitWorldAction action2 = PursuitWorldAction.getAction(currentLocation, availableMoves.get(min2pos));
-			
+			boolean movingAway = awayFromGoal(currentLocation, goalLocation, availableMoves.get(min1pos), availableMoves.get(min2pos) );
 			boolean sameAxis = checkAxis(action1, action2);
 			
 			
@@ -135,6 +135,7 @@ public class OnlineGreedyTabuPursuedAgentProgram extends OnlineGreedyPursuedAgen
 			int dirY = firstY - secondY;
 			
 			if (finalX > finalY){
+				// if distance on X axis is greater than Y axis
 				if(sameAxis){
 					//if the only available moves are left or right
 					if(action1.equals(PursuitWorldAction.Left))
@@ -145,7 +146,14 @@ public class OnlineGreedyTabuPursuedAgentProgram extends OnlineGreedyPursuedAgen
 				}
 				else{
 					//if the available moves are on different axes
-					if(dirX < 0){
+					if (movingAway){
+						if (action1.equals(PursuitWorldAction.Up) || action1.equals(PursuitWorldAction.Down) )
+							action = action1;
+						else 
+							action = action2;
+								
+					}
+					else if(dirX < 0){
 						if (action1.equals(PursuitWorldAction.Right) )
 							action = action1;
 						else 
@@ -161,6 +169,7 @@ public class OnlineGreedyTabuPursuedAgentProgram extends OnlineGreedyPursuedAgen
 				
 			}
 			else if(finalX < finalY) {
+				//if the distance between the Y axis is greater than the X axis
 				if(sameAxis){
 					//if the only available moves are up or down
 					if(action1.equals(PursuitWorldAction.Down))
@@ -171,7 +180,14 @@ public class OnlineGreedyTabuPursuedAgentProgram extends OnlineGreedyPursuedAgen
 				}
 				else{
 					//if the available moves are on different axes
-					if(dirY < 0){
+					if (movingAway){
+						if (action1.equals(PursuitWorldAction.Left) || action1.equals(PursuitWorldAction.Right) )
+							action = action1;
+						else 
+							action = action2;
+								
+					}
+					else if(dirY < 0){
 						//if 
 						if (action1.equals(PursuitWorldAction.Down) )
 							action = action1;
@@ -291,6 +307,21 @@ public class OnlineGreedyTabuPursuedAgentProgram extends OnlineGreedyPursuedAgen
 				
 		return direction;
 		
+		
+	}
+	
+	protected boolean awayFromGoal(XYLocation current, XYLocation goal, XYLocation action1, XYLocation action2){
+		boolean sameDirection = false;
+		ManhattanDistance man = new ManhattanDistance();
+		int currentDistance = man.getDistance(current, goal);
+		int action1Dist = man.getDistance(action1, goal);
+		int action2Dist = man.getDistance(action2, goal);
+		
+		if (action1Dist > currentDistance && action2Dist > currentDistance )
+			sameDirection = true;
+		
+		
+		return sameDirection;
 		
 	}
 }

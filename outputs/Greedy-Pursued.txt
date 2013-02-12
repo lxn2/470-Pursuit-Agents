@@ -1,0 +1,20 @@
+Pursued agent strategy: Greedy
+Pursuer agent strategy: Greedy
+Pursued agent metrics: {}
+Pursuer agent 0 metrics: {}
+Pursuer agent 1 metrics: {}
+Transcript:
+Pursued	Pursuer0	Pursuer1
+(1, 1)	(8, 1)	(8, 2)
+(1, 2)	(7, 1)	(7, 2)
+(1, 3)	(6, 1)	(6, 2)
+(2, 3)	(5, 1)	(5, 2)
+(2, 4)	(5, 2)	(4, 2)
+(2, 5)	(5, 3)	(3, 2)
+(3, 5)	(5, 3)	(3, 3)
+(3, 6)	(5, 3)	(3, 3)
+(4, 6)	(5, 3)	(3, 3)
+(5, 6)	(5, 3)	(3, 3)
+(6, 6)	(6, 3)	(3, 3)
+(6, 7)	(6, 3)	(3, 3)
+(6, 8)	(6, 3)	(3, 3)

@@ -1,0 +1,66 @@
+part 1
+
+
+
+The changes made were as follows:
+In AbstractOnlineGreedyPursuitWorldAgentProgram.java
+
+The function getGreedyMove() was updated to include a list which is filled up with all the spots of the valid available moves. 
+Next, another list is filled up in parallel to the moves list which contains the manhattan distance from the potential move to the the goal location. The function then selects the action with the lowest hueristic value and takes that as its moves. 
+In the case of ties, a tie breaker section was included to highlight all the general cases that need to be considered. 
+
+For the manhattan distances, a separate class called ManhattanDistance.java was included.
+While this could have been implemented as a simple member function, we chose to use a class because we knew that the aStar agent would make use of the manhattan distance as well. 
+
+In addion to the getGreedyMove() additions, we also included a helper function called checkAxis() which was used for the tie breaking section of the get greedy move function.
+
+
+Program transcripts do match the provided output for pursued agent and the pursuer agents.
+
+
+part 2
+
+A
+
+This function makes use of the same code from getGreedyMove() but extended to now make use of a list that stores previous spots.
+
+Function clearTabuList() filled out to empty the implemented list of previous locations. 
+
+In getGreedyMove, new tiebreaking rules and conditions have been added to match the requirements. Additionally the method in which available moves are stored has been change to allow for temporary removal of moves which can then be restored in the case that there are no valid moves. 
+
+Function checkAxis() was resused from the part 1 implementation and function awayFromGoal() was added to check for addional tie breaking conditions. 
+
+Program transcript does match the provided output for the tabu agent.
+
+B
+
+tabu1.wld smallest tabu list size = 5
+tabu2.wld smallest tabu list size = 14
+
+In tabu world 1 the minimum list size is so small because of the fact that all the wall boundaries are disjoint and only affect the immediate area around them. Essentially, they become 3 sparate difficulty areas for which the tabu agent can deal with separately because once it is past them,  they are no longer part of its path to the goal. On the other hand in tabu world 2, the wall forms a single contigous barrier which the agent needs to be able to search along the entire side before being able to find a better greedy spot.
+
+As a generality, the search space needs to be at least as large as the area taken up by the largest obstacle that gets in the way of the agent and its goal. In these two specific cases, the minimum list size was slightly smaller but that has to do with the shape and initial postion in relation to the goal position.
+
+
+C
+
+
+The greedy strategy with tabu list can fail in any case where the agent is located in an area that is square shaped and only has one exit. If the exit is placed on the opposite direction of the goal location in relation to the agent, it will be unable to find the exit. Additionally the exit must not be situated near a corner. 
+for example the map:
+
+1 1 1 1 1 1 1 1 1
+1 0 0 0 0 0 0 0 1
+1 0 0 0 G 0 0 0 1
+1 0 0 0 0 0 0 0 1
+1 0 1 1 1 1 1 0 1
+1 0 1 0 0 0 1 0 1
+1 0 1 0 0 0 1 0 1
+1 0 1 0 @ 0 1 0 1
+1 0 1 0 0 0 1 1 1
+1 0 1 0 0 0 1 0 1
+1 0 1 1 0 1 1 0 1
+1 0 0 0 0 0 0 0 1
+
+
+Where @ is the agent location
+and G is the goal, the agent will never find the path out because it will never stop near the exit, and even if it does, the exit path will always be one cost more than any of the other valid moves. The size of the tabu list plays no role because of the fact that its greedy habits will never let it consider the exit move unless if it traversed the entire room and then it landed on the last room spot which happened to be right next to the exit (this is the reason why I said that the exit cannot be next to a corner or the tabu agent can escape from the room.
