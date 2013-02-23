@@ -38,23 +38,8 @@ public class SmartAStarPursuedAgent extends AStarPursuedAgent {
 			super(state.getMaze(), state.getPursuedAgentId(), state.getPursuerAgentsIds(), state.getAgentsLocations());
 			this.pursuersAgentsDistancesToGoal= new HashMap<Integer, Integer>();
 			this.pursuersAgentsDistancesToPursuedAgent = new HashMap<Integer,Integer>();
-			//updatePursuersAgentsDistancesToGoal();
-			//updatePursuersAgentsDistancesToPursuedAgent();
 			mazeView = this.getMaze().getIsWall();
 		}
-		/* 
-		public void updatePursuersAgentsDistancesToGoal() {
-			XYLocation pursuedAgentLocation = this.getPursuedAgentLocation();
-			for(Integer pursuerAgentId : this.getPursuerAgentsIds())
-			{
-				XYLocation agentLocation =  this.getPursuerAgentLocation(pursuerAgentId);
-				
-			}
-		} 
-		
-		public void updatePursuersAgentsDistancesToPursuedAgent() {
-			
-		}*/
 		
 		/**
 		 * Invalidate state by putting agent in a wall.
@@ -159,15 +144,6 @@ public class SmartAStarPursuedAgent extends AStarPursuedAgent {
 				PursuitWorldAction pursuerNextAction = (PursuitWorldAction) greedyProgram.getGreedyMove(agentLocation, pursuedAgentNewLocation, newState.getMaze());
 				newState.move(agentId, pursuerNextAction);
 			}
-			/*
-			for(Integer agentId : newState.getPursuerAgentsIds()) {
-				XYLocation pursuerLocation = newState.getAgentLocation(agentId);
-				if (pursuerLocation == pursuedAgentNewLocation) 
-				{
-					newState.invalidate(); //Double.POSITIVE_INFINITY;
-					break;
-				}
-			} */
 			
 			return newState;
 		}
@@ -184,12 +160,6 @@ public class SmartAStarPursuedAgent extends AStarPursuedAgent {
 		return new SmartAStarStepCostFunction();
 	}
 
-	/*
-	@Override
-	protected HeuristicFunction getHeuristicFunction() {
-		return new SmartAStarHeuristicFunction(this);
-	} */
-
 	protected SmartAStarPursuedAgentState getStateFromPercept(PursuitWorldPercept percept) {
 		Maze maze = (Maze) percept.getAttribute(PursuitWorldPercept.AttributeKey.Maze);
 		Integer pursuedAgentId = (Integer) percept.getAttribute(PursuitWorldPercept.AttributeKey.PursuedAgentId);
@@ -202,37 +172,6 @@ public class SmartAStarPursuedAgent extends AStarPursuedAgent {
 		return new SmartAStarPursuedAgentState(maze, pursuedAgentId, pursuerAgentsIds, agentLocations);
 	}
 
-	/*
-	protected static class SmartAStarHeuristicFunction implements HeuristicFunction {
-		private SmartAStarPursuedAgent agent;
-		private SmartAStarPursuedAgentState currentState;
-		
-		public SmartAStarHeuristicFunction(SmartAStarPursuedAgent agent) {
-			this.agent = agent;
-		}	
-		
-		@Override
-		public double h(Object state) {
-			double h = 0;
-			this.currentState = (SmartAStarPursuedAgentState) state;
-			
-			// 
-			ManhattanDistance manhattanDistance = new ManhattanDistance();
-			XYLocation goal = this.currentState.getMaze().getSafetyLocation();
-			h = (double) manhattanDistance.getDistance(this.currentState.getAgentLocation(this.agent.getId()), goal);
-			
-			for(Integer agentId : this.currentState.getPursuerAgentsIds()) {
-				XYLocation agentLocation = this.currentState.getAgentLocation(agentId);
-				AbstractOnlineGreedyPursuitWorldAgentProgram greedyProgram = new OnlineGreedyPursuerAgentProgram();
-				Action pursuerNextAction = greedyProgram.getGreedyMove(agentLocation, this.currentState.getPursuedAgentLocation(), this.currentState.getMaze());
-				if(pursuerNextAction == PursuitWorldAction.Stay)
-					h--;
-			}
-			
-			return h;
-		}
-		
-	} */
 	
 	/**
 	 * Use the step cost function to make captures and illegal states extremely unpalatable.
