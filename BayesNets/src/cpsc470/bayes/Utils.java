@@ -1,5 +1,7 @@
 package cpsc470.bayes;
 
+import java.util.Set;
+
 import aima.core.probability.CategoricalDistribution;
 import aima.core.probability.RandomVariable;
 import aima.core.probability.bayes.BayesianNetwork;
@@ -17,9 +19,33 @@ public class Utils {
 	 */
 	public static double computeDistributionRMSE(CategoricalDistribution distrib1, CategoricalDistribution distrib2) {
 
-		double rmse = 0;
+		double rmse = 0.0;
+		double sumOfSquares = 0.0;
+		Set<RandomVariable> dist1RandVars, dist2RandVars;
 		
 		// TODO PROBLEM 2: FILL THIS IN
+		
+		if(distrib1.equals(null) || distrib2.equals(null))
+			throw new NullPointerException();
+		
+		dist1RandVars = distrib1.getFor();
+		dist2RandVars = distrib2.getFor();
+		
+		if(!dist1RandVars.equals(dist2RandVars))
+			throw new IllegalArgumentException();
+		
+		int numVariables = dist1RandVars.size();
+		for(RandomVariable w : dist1RandVars)
+		{
+			double probabilityw1 = distrib1.getValue(w);
+			double probabilityw2 = distrib2.getValue(w);
+			double difference = probabilityw1 - probabilityw2;
+			double differenceSquared = Math.pow(difference, 2);
+			sumOfSquares += differenceSquared;
+		}
+		
+		double mean = sumOfSquares / (double) numVariables;
+		rmse = Math.sqrt(mean);
 		
 		return rmse;
 	}
