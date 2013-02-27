@@ -52,6 +52,8 @@ public class BayesNetRunner {
 		
 		BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
 		List<RunTimeStats> distributionList = new LinkedList<RunTimeStats>();
+		LinkedList<Double> rmseList = new LinkedList<Double>();
+		double[] rmseTimes = null;
 		
 		boolean loop = true;
 		//XMLBIFSAXParserTest test = new XMLBIFSAXParserTest();
@@ -61,7 +63,8 @@ public class BayesNetRunner {
 			System.out.println("1. Run Inference" );
 			System.out.println("2. Check RMSE" );
 			System.out.println("3. Compute Standard Deviation of Runtimes" );
-			System.out.println("4. Quit" );
+			System.out.println("4. Compute Standard Deviation of RMSE" );
+			System.out.println("5. Quit" );
 			System.out.println("Input selection of choice you want to run" );
 					
 			String input = null;
@@ -78,11 +81,22 @@ public class BayesNetRunner {
 			if(choice == 1){
 				distributionList.add(runInference(bayesNet) );
 			}else if(choice== 2){
-				runRMSE(distributionList);
+				rmseList.add(runRMSE(distributionList)  );
 			}else if(choice== 3){
 				calculateSD(distributionList);		
-				
 			}else if(choice== 4){
+				rmseTimes = new double[rmseList.size() ];
+				double avg = 0;
+				for(int i=0; i<rmseList.size(); i++){
+					rmseTimes[i] = rmseList.get(i);
+					avg = avg + rmseTimes[i];
+				}
+				
+				System.out.println("Standard Deviation is  = " + findStandardDev(rmseTimes) );
+				
+				System.out.println("Average of time is  = " + avg/(double)rmseTimes.length  );
+				
+			}else if(choice== 5){
 				loop = false;
 			}
 			
@@ -92,6 +106,7 @@ public class BayesNetRunner {
 		
 		
 	}
+		
 	private static void calculateSD(List<RunTimeStats> distributionList){
 		BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
 		System.out.println("");
@@ -142,7 +157,7 @@ public class BayesNetRunner {
 		
 		return result;
 	}
-	private static void runRMSE(List<RunTimeStats> distributionList){
+	private static double runRMSE(List<RunTimeStats> distributionList){
 		BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
 		
 		System.out.println("");
@@ -163,6 +178,7 @@ public class BayesNetRunner {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		double rmse = 0;
 		
 		String[] tokens = input.split(delims);
 		int distribLocation1 = Integer.parseInt(tokens[0]);
@@ -170,13 +186,15 @@ public class BayesNetRunner {
 			
 			int distribLocation2 = Integer.parseInt(tokens[1]);
 			
-			double rmse = Utils.computeDistributionRMSE(distributionList.get(distribLocation1).distrib,
+			rmse = Utils.computeDistributionRMSE(distributionList.get(distribLocation1).distrib,
 															distributionList.get(distribLocation2).distrib );
 
 			System.out.println("RMSE: " + rmse);
 			System.out.println();
 		
 		}
+		
+		return rmse;
 		
 	}
 	private static RunTimeStats runInference(BayesNet bayesNet){
