@@ -28,6 +28,12 @@ import aima.core.probability.domain.Domain;
 import aima.core.probability.proposition.AssignmentProposition;
 import aima.test.core.unit.probability.bayes.util.XMLBIFSAXParserTest;
 
+ class RunTimeStats {
+	public CategoricalDistribution distrib;
+	public long runTime;
+}
+
+
 public class BayesNetRunner {
 	
 	/**
@@ -45,7 +51,7 @@ public class BayesNetRunner {
 		BayesNet bayesNet = importNetwork(filePath);
 		
 		BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
-		List<CategoricalDistribution> distributionList = new LinkedList<CategoricalDistribution>();
+		List<RunTimeStats> distributionList = new LinkedList<RunTimeStats>();
 		
 		boolean loop = true;
 		//XMLBIFSAXParserTest test = new XMLBIFSAXParserTest();
@@ -54,7 +60,8 @@ public class BayesNetRunner {
 			
 			System.out.println("1. Run Inference" );
 			System.out.println("2. Check RMSE" );
-			System.out.println("3. Quit" );
+			System.out.println("3. Compute Standard Deviation of Runtimes" );
+			System.out.println("4. Quit" );
 			System.out.println("Input selection of choice you want to run" );
 					
 			String input = null;
@@ -72,9 +79,10 @@ public class BayesNetRunner {
 				distributionList.add(runInference(bayesNet) );
 			}else if(choice== 2){
 				runRMSE(distributionList);
-					
-				
 			}else if(choice== 3){
+				calculateSD(distributionList);		
+				
+			}else if(choice== 4){
 				loop = false;
 			}
 			
@@ -84,13 +92,59 @@ public class BayesNetRunner {
 		
 		
 	}
-	
-	private static void runRMSE(List<CategoricalDistribution> distributionList){
+	private static void calculateSD(List<RunTimeStats> distributionList){
+		BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
+		System.out.println("");
+		for(int i=0; i<distributionList.size(); i++){
+			System.out.println(i + " " +  distributionList.get(i).runTime );			
+		}
+		System.out.println(distributionList.size() + " Quit");
+		
+		System.out.println("Separated by commas, input indexes of runtimes you want to calculate standard deviation of");
+		String delims = "[,]";
+		String input = null;
+		
+		try {
+			input = bufferRead.readLine();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String[] tokens = input.split(delims);
+		double[] runTimes = new double[tokens.length];
+		if(Integer.parseInt(tokens[0]) != distributionList.size() && tokens.length >= 1 ){
+			for (int j=0; j<tokens.length; j++){
+				runTimes[j] = distributionList.get( Integer.parseInt(tokens[j])  ).runTime;
+			}
+			System.out.println("Standard Deviation is  = " + findStandardDev(runTimes)   );
+		}
+		
+		
+	}
+	private static double findStandardDev(double[] runTimes){
+		double result;
+		double avg = 0;
+		double arthimetic = 0;
+		double size = (double) runTimes.length ;
+		for(int i=0; i<runTimes.length; i++){
+			avg += runTimes[i];
+		}
+		avg = avg/size;
+		for(int i=0; i<runTimes.length; i++){
+			double temp = (runTimes[i] - avg);
+			arthimetic = arthimetic + Math.pow(temp, 2);
+		}
+		result =   Math.sqrt(arthimetic/size);
+
+		
+		return result;
+	}
+	private static void runRMSE(List<RunTimeStats> distributionList){
 		BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
 		
 		System.out.println("");
 		for(int i=0; i<distributionList.size(); i++){
-			CategoricalDistribution temp = distributionList.get(i);
+			CategoricalDistribution temp = distributionList.get(i).distrib;
 			System.out.println(i + " " +  temp.toString()   );			
 		}
 		System.out.println(distributionList.size() + " Quit");
@@ -113,8 +167,8 @@ public class BayesNetRunner {
 			
 			int distribLocation2 = Integer.parseInt(tokens[1]);
 			
-			double rmse = Utils.computeDistributionRMSE(distributionList.get(distribLocation1),
-															distributionList.get(distribLocation2) );
+			double rmse = Utils.computeDistributionRMSE(distributionList.get(distribLocation1).distrib,
+															distributionList.get(distribLocation2).distrib );
 
 			System.out.println("RMSE: " + rmse);
 			System.out.println();
@@ -122,7 +176,7 @@ public class BayesNetRunner {
 		}
 		
 	}
-	private static CategoricalDistribution runInference(BayesNet bayesNet){
+	private static RunTimeStats runInference(BayesNet bayesNet){
 		List<RandomVariable> vars = new ArrayList<RandomVariable>();
 		
 		vars = bayesNet.getVariablesInTopologicalOrder();
@@ -142,10 +196,13 @@ public class BayesNetRunner {
 		CategoricalDistribution targetDistrib = bayesInference.ask(queryVariables, observedEvidence, bayesNet);
 		long runTimeMillis = System.currentTimeMillis() - startTime;
 		System.out.println("Target distribution: " + targetDistrib);
-		System.out.println("Exact run time using " + bayesInference.getClass().getSimpleName() + ": " + runTimeMillis + "s");
+		System.out.println("Exact run time using " + bayesInference.getClass().getSimpleName() + ": " + runTimeMillis + "ms");
 		System.out.println();
+		RunTimeStats task = new RunTimeStats();
+		task.distrib = targetDistrib;
+		task.runTime = runTimeMillis;
 		
-		return targetDistrib;
+		return task;
 	}
 	
 	private static ArrayList<RandomVariable> convertToArrayList(List<RandomVariable> vars){
@@ -242,6 +299,9 @@ public class BayesNetRunner {
 	private static List<AssignmentProposition> getEvidence(ArrayList<RandomVariable> varList){
 		List<AssignmentProposition> evidenceList = new ArrayList<AssignmentProposition>();
 		BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
+		Boolean inputCheck = true;
+		//wl
+		while (inputCheck){
 		printEvidenceList(varList);
 		System.out.println("Separated by commas, input indexes and truth values for all the evidence variables");
 		
@@ -261,15 +321,42 @@ public class BayesNetRunner {
 		for(int i=0; i<tokens.length; i+=2){
 			int temp =  Integer.parseInt(tokens[i]);
 			String testValue = tokens[i+1];
+			Boolean binaryValue = true;
+			RandomVariable testVariable = varList.get(temp);
+			if( testValue.contentEquals("true") || testValue.contentEquals("True") || 
+					testValue.contentEquals("t") || testValue.contentEquals("T") ){
+				binaryValue = true;
+				AssignmentProposition assignment = new 	AssignmentProposition(testVariable, binaryValue);
+				evidenceList.add(assignment);
+				inputCheck = false;
+			}	else if( testValue.contentEquals("false") || testValue.contentEquals("False") || 
+					testValue.contentEquals("f") || testValue.contentEquals("F") ){
+				binaryValue = false;
+				AssignmentProposition assignment = new 	AssignmentProposition(testVariable, binaryValue);
+				evidenceList.add(assignment);
+				inputCheck = false;
+			}else{
+				
+			Domain testDomain = testVariable.getDomain();
+			String tempStr  =  testDomain.toString();
+			tempStr = tempStr.replaceAll("\\s", "");
+			String[] possibleValues = tempStr.substring(1, tempStr.length()-1).split(",");
 			
-			AssignmentProposition assignment = new 	AssignmentProposition(varList.get(temp), testValue);
-			evidenceList.add(assignment);
+			for(int b = 0; b< possibleValues.length; b++){
+				if (possibleValues[b].contentEquals(testValue) ){
+					AssignmentProposition assignment = new 	AssignmentProposition(testVariable, testValue);
+					evidenceList.add(assignment);
+					inputCheck = false;
+				}
+			}
+			if (inputCheck)
+				System.out.println("Input failed, please try again using proper domain values.");
+			}
+		}
+		
 		}
 		//
-		for(int i=0; i<tokens.length; i+=2){
-			int temp =  Integer.parseInt(tokens[i]);
-			varList.remove(temp);
-		}
+
 		return evidenceList;
 	}
 	
@@ -300,9 +387,8 @@ public class BayesNetRunner {
 			queryVars.add(varList.get(temp) );
 		}
 		//remove query variables from main list so they cannot be used as evidence variables
-		for(int i=0; i<tokens.length; i++){
-			int temp =  Integer.parseInt(tokens[i]);
-			varList.remove(i);
+		for(int i=0; i<queryVars.size(); i++){
+			varList.remove(queryVars.get(i));
 		}
 		return queryVars;
 	}
