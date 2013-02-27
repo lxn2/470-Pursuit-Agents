@@ -113,10 +113,13 @@ public class BayesNetRunner {
 		String[] tokens = input.split(delims);
 		double[] runTimes = new double[tokens.length];
 		if(Integer.parseInt(tokens[0]) != distributionList.size() && tokens.length >= 1 ){
+			double avg = 0;
 			for (int j=0; j<tokens.length; j++){
 				runTimes[j] = distributionList.get( Integer.parseInt(tokens[j])  ).runTime;
+				avg = avg + runTimes[j];
 			}
 			System.out.println("Standard Deviation is  = " + findStandardDev(runTimes)   );
+			System.out.println("Average of time is  = " + avg/(double)runTimes.length  );
 		}
 		
 		
