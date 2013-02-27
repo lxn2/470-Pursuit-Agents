@@ -38,8 +38,20 @@ public class Utils {
 		if(!dist1RandVars.equals(dist2RandVars))
 			throw new IllegalArgumentException();
 		
+		double dist1Values[] = distrib1.getValues();
+		double dist2Values[] = distrib2.getValues();
+		
+		for(int i = 0; i < dist1Values.length; i++)
+		{
+			double difference = dist1Values[i] - dist2Values[i];
+			double differenceSquared = Math.pow(difference, 2);
+			sumOfSquares += differenceSquared;		
+		}
+		
+		/*
 		int numVariables = dist1RandVars.size();
-		int numValues = 1;
+		int numComboValues = 1;
+		int maxValuesPerVariable = 0;
 		
 		// array holds variable names
 		Object varArr[] = dist1RandVars.toArray(); //(RandomVariable[])
@@ -48,7 +60,10 @@ public class Utils {
 		for(int variableI = 0; variableI < varArr.length; variableI++)
 		{
 			varDomainsArr[variableI] = (FiniteDomain) ((RandomVariable) varArr[variableI]).getDomain();
-			numValues *= varDomainsArr[variableI].size();
+			int numValuesInDomain = varDomainsArr[variableI].size();
+			numComboValues *= numValuesInDomain;
+			if (numValuesInDomain > maxValuesPerVariable)
+				maxValuesPerVariable = numValuesInDomain;
 		}
 			
 		// initialize values to the first value in domain and calculate
@@ -64,21 +79,21 @@ public class Utils {
 
 		
 		// flip values to get every combinations of values possible and calculate
-		for(int valueCombo = 1; valueCombo < Math.pow(2, numVariables); valueCombo++) // Gets different combinations
+		for(int valueCombo = 1; valueCombo < numComboValues; valueCombo++) // Gets different combinations
 			// of values for the whole set of variables
 		{
 			byte[] comboInBits = toBytes(valueCombo);
 			int bitIndex = 0; // Bit index in each byte (7-0)
 			int arrayIndex = comboInBits.length - 1; // Byte index for each set of 8 bits
-			int bitValuesCovered = 0; // Keep track of how many values have changed
-			while (arrayIndex >= 0 && bitValuesCovered < numVariables) // Changes variable values according to bit values
+			int valuesCovered = 0; // Keep track of how many values have changed
+			while (arrayIndex >= 0 && valuesCovered < numVariables) // Changes variable values according to bit values
 			{
 				if ((comboInBits[arrayIndex] >> (bitIndex) & 1) == 1)
-					valueArr[numVariables - bitValuesCovered - 1] = varDomainsArr[numVariables - bitValuesCovered - 1].getValueAt(1); 
+					valueArr[numVariables - valuesCovered - 1] = varDomainsArr[numVariables - valuesCovered - 1].getValueAt(1); 
 				else
-					valueArr[numVariables - bitValuesCovered - 1] = varDomainsArr[numVariables - bitValuesCovered - 1].getValueAt(0); 
+					valueArr[numVariables - valuesCovered - 1] = varDomainsArr[numVariables - valuesCovered - 1].getValueAt(0); 
 				bitIndex++;
-				bitValuesCovered++;
+				valuesCovered++;
 				if (bitIndex == 8)
 				{
 					bitIndex = 0;
@@ -92,8 +107,9 @@ public class Utils {
 			differenceSquared = Math.pow(difference, 2);
 			sumOfSquares += differenceSquared;
 		}
+		*/
 		
-		double mean = sumOfSquares / (double) numValues;
+		double mean = sumOfSquares / (double) dist1Values.length;
 		rmse = Math.sqrt(mean);
 		
 		return rmse;
