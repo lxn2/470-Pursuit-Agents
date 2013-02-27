@@ -46,6 +46,7 @@ public class BayesNetRunner {
 		
 		BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
 		List<CategoricalDistribution> distributionList = new LinkedList<CategoricalDistribution>();
+		
 		boolean loop = true;
 		//XMLBIFSAXParserTest test = new XMLBIFSAXParserTest();
 		//test.testLoadAlarmNetwork();
@@ -125,8 +126,12 @@ public class BayesNetRunner {
 		List<RandomVariable> vars = new ArrayList<RandomVariable>();
 		
 		vars = bayesNet.getVariablesInTopologicalOrder();
-		List<RandomVariable> queryVars =  getQueryVars( vars );
-		List<AssignmentProposition> evidenceList = getEvidence(vars); 
+		
+		ArrayList<RandomVariable> varsList = convertToArrayList(vars);
+		List<RandomVariable> queryVars =  getQueryVars( varsList );
+		List<AssignmentProposition> evidenceList = getEvidence(varsList); 
+		
+
 		
 		RandomVariable[] queryVariables = convertQuerry(queryVars);
 		AssignmentProposition[] observedEvidence = convertEvidence(evidenceList);
@@ -141,6 +146,15 @@ public class BayesNetRunner {
 		System.out.println();
 		
 		return targetDistrib;
+	}
+	
+	private static ArrayList<RandomVariable> convertToArrayList(List<RandomVariable> vars){
+		ArrayList<RandomVariable> varList = new ArrayList<RandomVariable>();
+		for(int i=0; i<vars.size(); i++){
+			varList.add(vars.get(i) );
+		}
+		return varList;
+		
 	}
 	private static RandomVariable[]  convertQuerry(List<RandomVariable> queryVars) {
 		RandomVariable[] queryVariables = new RandomVariable[queryVars.size()];
@@ -225,7 +239,7 @@ public class BayesNetRunner {
 		}
 	}
 	
-	private static List<AssignmentProposition> getEvidence(List<RandomVariable> varList){
+	private static List<AssignmentProposition> getEvidence(ArrayList<RandomVariable> varList){
 		List<AssignmentProposition> evidenceList = new ArrayList<AssignmentProposition>();
 		BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
 		printEvidenceList(varList);
@@ -252,15 +266,15 @@ public class BayesNetRunner {
 			evidenceList.add(assignment);
 		}
 		//
-		//for(int i=0; i<tokens.length; i++){
-		//	int temp =  Integer.parseInt(tokens[i]);
-		//	varList.remove(temp);
-		//}
+		for(int i=0; i<tokens.length; i+=2){
+			int temp =  Integer.parseInt(tokens[i]);
+			varList.remove(temp);
+		}
 		return evidenceList;
 	}
 	
 	
-	private static List<RandomVariable> getQueryVars(List<RandomVariable> varList ){
+	private static List<RandomVariable> getQueryVars(ArrayList<RandomVariable> varList ){
 		BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
 		List<RandomVariable> queryVars = new ArrayList<RandomVariable>();
 		
@@ -286,10 +300,10 @@ public class BayesNetRunner {
 			queryVars.add(varList.get(temp) );
 		}
 		//remove query variables from main list so they cannot be used as evidence variables
-		//for(int i=0; i<tokens.length; i++){
-		//	int temp =  Integer.parseInt(tokens[i]);
-		//	varList.
-		//}
+		for(int i=0; i<tokens.length; i++){
+			int temp =  Integer.parseInt(tokens[i]);
+			varList.remove(i);
+		}
 		return queryVars;
 	}
 	
