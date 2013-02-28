@@ -360,10 +360,13 @@ public class BayesNetRunner {
 				
 			Domain testDomain = testVariable.getDomain();
 			String tempStr  =  testDomain.toString();
-			tempStr = tempStr.replaceAll("\\s", "");
+			//tempStr = tempStr.replaceAll("\\s", "");
 			String[] possibleValues = tempStr.substring(1, tempStr.length()-1).split(",");
 			
 			for(int b = 0; b< possibleValues.length; b++){
+				if(b>0){
+					possibleValues[b] = possibleValues[b].substring(1);
+				}
 				if (possibleValues[b].contentEquals(testValue) ){
 					AssignmentProposition assignment = new 	AssignmentProposition(testVariable, testValue);
 					evidenceList.add(assignment);
